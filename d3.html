@@ -1,0 +1,141 @@
+<html>
+<head>
+<title>D3 Testing</title>
+<link rel="stylesheet" type="text/css" href="style.css">
+<script type="text/javascript" src="http://mbostock.github.com/d3/d3.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+</head>
+<body>
+
+	<button id="sort" onclick="sortColors()">Sort</button>
+
+	<div id="colors" class="debug"></div>
+
+<script type="text/javascript">
+
+	function rgb2hsv () {
+    var rr, gg, bb,
+      r = arguments[0] / 255,
+      g = arguments[1] / 255,
+      b = arguments[2] / 255,
+      h, s,
+      v = Math.max(r, g, b),
+      diff = v - Math.min(r, g, b),
+      diffc = function(c){
+        return (v - c) / 6 / diff + 1 / 2;
+    };
+
+    if (diff == 0) {
+      h = s = 0;
+    } else {
+      s = diff / v;
+      rr = diffc(r);
+      gg = diffc(g);
+      bb = diffc(b);
+
+      if (r === v) {
+        h = bb - gg;
+      } else if (g === v) {
+        h = (1 / 3) + rr - bb;
+      } else if (b === v) {
+        h = (2 / 3) + gg - rr;
+      }
+      if (h < 0) {
+        h += 1;
+      } else if (h > 1) {
+        h -= 1;
+      }
+    }
+    return {
+      h: Math.round(h * 360),
+      s: Math.round(s * 100),
+      v: Math.round(v * 100)
+    };
+	}
+
+	function hex2rgb (hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+    } : null;
+	}
+
+	var format = d3.time.format("%Y-%m-%d %X");
+	var prevMonth = "";
+	var currentMonth = "";
+
+	d3.csv("allpins.csv", function (pins) {
+		// console.log(pins);
+		d3.select("#colors").selectAll("div")
+	    .data(pins)
+	    .enter()
+	    .append("div")
+	    .style("background-color", function(d) {
+		    return d['dominant_color'];
+			})
+			.style("background-image", function(d) {
+				return "url('" + d['image_square_url'] + "'')";
+			})
+			.classed("pincolor", true)
+			.classed("lighttext", function (d) {
+				c = d['dominant_color']
+				if (c) {
+					rgb = hex2rgb(c);
+					hsv = rgb2hsv(rgb.r, rgb.g, rgb.b);
+					return (hsv.v < 70);
+				}
+				else return false;
+			})
+			.classed("nocolor", function (d) {
+				c = d['dominant_color']
+				return !c;
+			})
+			.classed("firstOfMonth", function (d) {
+	    	var format_month = d3.time.format("%b");
+	    	var t = format.parse(d['created_at']);
+	    	currentMonth = format_month(t);
+	    	if (!prevMonth || (prevMonth !== currentMonth)) {
+	    		prevMonth = currentMonth;
+	    		return true;
+	    	}
+	    	else {
+	    		prevMonth = currentMonth;
+	    		return false;
+	    	}
+			})
+	    .text(function(d) { 
+	    	// 2014-02-15 22:17:17
+	    	var format = d3.time.format("%Y-%m-%d %X");
+	    	var format2 = d3.time.format("%B %Y");
+	    	var t = format.parse(d['created_at']);
+	    	var t2 = format2(t);
+	    	return t2; 
+	    });
+	  $(".firstOfMonth").before(function() {
+	    return "<p class='month'>" + $(this).text() + "</p>"
+		}
+	  );
+	});
+
+	sortOrder = false;
+	sortColors = function (a, b) {
+
+		var sortItems = function (a, b) {
+			console.log(a);
+			// var aRGB = hex2rgb(a['dominant_color']);
+			// var aHSV = rgb2hsv(aRGB.r, aRGB.g, aRGB.b);
+			// var bRGB = hex2rgb(b['dominant_color']);
+			// var bHSV = rgb2hsv(bRGB.r, bRGB.g, bRGB.b);
+	  //   return aHSV.h - bHSV.h;
+    };
+
+    d3.selectAll("div")
+        .sort(sortItems)
+        .transition();
+  };
+
+</script>
+</body>
+</html>

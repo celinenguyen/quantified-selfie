@@ -1,0 +1,74 @@
+body {
+	margin: 0;
+	padding: 0;
+	background-color: #000;
+}
+
+#colors {
+	margin: 0 auto;
+	width: 800px;
+}
+
+
+.pincolor {
+	display: inline-block;
+	width: 50px;
+	height: 50px;
+	/*padding: 5px;*/
+	text-transform: uppercase;
+	font-weight: bold;
+	font-family: Helvetica;
+	font-size: 12px;
+	margin: 0;
+	color: rgba(0,0,0,0);
+	/*background-image: url('http://media-cache-ec0.pinimg.com/45x45/34/e2/08/34e20884a046ddf5ef9720b9e74cb856.jpg');*/
+}
+
+/*.firstOfMonth {
+	color: rgba(0,0,0,0.5) !important;
+}
+.firstOfMonth.lighttext,
+.firstOfMonth.nocolor {
+	color: rgba(255,255,255,0.5) !important;
+}*/
+
+.month {
+	color: #fff;
+}
+
+.nocolor {
+	color: rgba(0,0,0,0);
+}
+
+.debug {
+	/*color: rgba(0,0,0,0.0) !important;*/
+}
+/*.jan,
+.feb,
+.mar,
+.apr,
+.may,
+.jun,
+.jul,
+.aug,
+.sep,
+.oct,
+.nov,
+.dec {
+	color: #000;
+}
+
+.jan ~ .jan,
+.feb ~ .feb,
+.mar ~ .mar,
+.apr ~ .apr,
+.may ~ .may,
+.jun ~ .jun,
+.jul ~ .jul,
+.aug ~ .aug,
+.sep ~ .sep,
+.oct ~ .oct,
+.nov ~ .nov,
+.dec ~ .dec {
+	color: rgba(0,0,0,0);
+}*/
