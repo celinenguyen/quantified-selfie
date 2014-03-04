@@ -108,20 +108,28 @@
       .classed("colorRange", function (d) {
         return true;
       });
+
+    d3.select("#range")
+      .append("div")
+      .classed("count", true)
+      .text(num);
   }
 
   function drawColorCalendar() {
-    d3.select("#colors").selectAll("div")
+    d3.select("#colors").selectAll("a")
       .data(all_pins)
       .enter()
-      .append("div")
+      .append("a")
+      .attr("href", function(d) {
+        return "http://www.pinterest.com/pin/" + d['id'] + "/"
+      })
       .style("background-color", function(d) {
         return d['dominant_color'];
       })
       .style("background-image", function(d) {
-        return "url('" + d['image_medium_url'] + "'')";
+        return "url('" + d['image_medium_url'] + "')";
       })
-      .classed("pincolor", true)
+      .classed("pin", true)
       .classed("lighttext", function (d) {
         c = d['dominant_color']
         if (c) {
