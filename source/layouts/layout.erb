@@ -72,16 +72,32 @@
 
   function drawHueRange(color) {
 
-    var from = color.from;
-    var to = color.to;
+    if (color === "neutral") {
+      var inRange = $(all_pins).filter(function (i) {
+        var rgb = hex2rgb(all_pins[i]['dominant_color']);
+        var hsv = rgb2hsv(rgb.r, rgb.g, rgb.b);
+        return (hsv.s < 10 && hsv.v > 30);
+      });
+    }
 
-    var inRange = $(all_pins).filter(function (i) {
-      var rgb = hex2rgb(all_pins[i]['dominant_color']);
-      var hsv = rgb2hsv(rgb.r, rgb.g, rgb.b);
-      return (hsv.h >= from && hsv.h <= to) 
-          && (hsv.s > 10 && hsv.v > 30);
-    });
+    else if (color == "all") {
+      var inRange = $(all_pins).filter(function (i) {
+        return true;
+      });
+    }
 
+    else {
+      var from = color.from;
+      var to = color.to;
+
+      var inRange = $(all_pins).filter(function (i) {
+        var rgb = hex2rgb(all_pins[i]['dominant_color']);
+        var hsv = rgb2hsv(rgb.r, rgb.g, rgb.b);
+        return (hsv.h >= from && hsv.h <= to) 
+            && (hsv.s > 10 && hsv.v > 30);
+      });
+    }
+    
     var sortedRange = inRange.sort(function (a, b) {
       var aRGB = hex2rgb(a['dominant_color']);
       var aHSV = rgb2hsv(aRGB.r, aRGB.g, aRGB.b);
@@ -101,7 +117,7 @@
       .data(sortedRange)
       .enter()
       .append("div")
-      .style("width", (600 / num) + "px")
+      .style("width", (800 / num) + "px")
       .style("background-color", function(d) {
         return d['dominant_color'];
       })
@@ -113,11 +129,24 @@
       .append("div")
       .classed("count", true)
       .text(num);
+
+    if (color === "all")
+      drawColorCalendar(sortedRange, true);
+    else
+      drawColorCalendar(sortedRange, false);
   }
 
-  function drawColorCalendar() {
+  function drawColorCalendar(pins, monthLabels) {
+
     d3.select("#colors").selectAll("a")
-      .data(all_pins)
+      .data([])
+      .exit()
+      .remove();
+
+    $(".month").remove();
+
+    d3.select("#colors").selectAll("a")
+      .data(pins)
       .enter()
       .append("a")
       .attr("href", function(d) {
@@ -130,15 +159,6 @@
         return "url('" + d['image_medium_url'] + "')";
       })
       .classed("pin", true)
-      .classed("lighttext", function (d) {
-        c = d['dominant_color']
-        if (c) {
-          rgb = hex2rgb(c);
-          hsv = rgb2hsv(rgb.r, rgb.g, rgb.b);
-          return (hsv.v < 70);
-        }
-        else return false;
-      })
       .classed("nocolor", function (d) {
         c = d['dominant_color']
         return !c;
@@ -156,6 +176,7 @@
           return false;
         }
       })
+      .classed("brick", !monthLabels)
       .text(function(d) { 
         // 2014-02-15 22:17:17
         var format = d3.time.format("%Y-%m-%d %X");
@@ -164,10 +185,13 @@
         var t2 = format2(t);
         return t2; 
       });
-    $(".firstOfMonth").before(function() {
-      return "<p class='month'>" + $(this).text() + "</p>"
+
+    if (monthLabels) {
+      $(".firstOfMonth").before(function() {
+        return "<p class='month'>" + $(this).text() + "</p>"
+      });
     }
-    );
+    
   }
 
   d3.csv("allpins-color.csv", function (pins) {
@@ -187,7 +211,11 @@
     var purple = new Object();
       purple.from = 260; purple.to = 330;
 
-    drawHueRange(red);
+    $("#all").click(function() {
+      drawHueRange("all");
+      drawColorCalendar(all_pins, true);
+      $(this).class("active");
+    });
     $("#redRange").click(function() { 
       drawHueRange(red);
     });
@@ -206,7 +234,11 @@
     $("#purpleRange").click(function() { 
       drawHueRange(purple);
     });
-    drawColorCalendar(pins);
+    $("#neutralRange").click(function() { 
+      drawHueRange("neutral");
+    });
+
+    drawColorCalendar(pins, true);
   });
 
 </script>
