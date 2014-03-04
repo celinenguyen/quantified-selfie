@@ -2,6 +2,12 @@
 
 * on:hover, show the image_medium_size (200px wide)
 * allow sorting and filtering by hue
+	* red: 0-10, 330-359
+	* orange: 10-45
+	* yellow: 45, 70
+	* green: 70, 170
+	* blue: 170, 260
+	* purple: 260,330
 
 ***
 

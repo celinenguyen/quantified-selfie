@@ -1,0 +1,55 @@
+@charset "utf-8";
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #333;
+}
+
+#toggles, #range, #colors {
+  margin: 0 auto;
+  width: 600px;
+}
+
+#image {
+  background-color: red;
+  float: right;
+}
+
+#toggles > div {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #fff;
+}
+#toggles > div:hover {
+  background-color: #eee;
+}
+
+.colorRange {
+  height: 100px;
+  display: inline-block;
+}
+
+.pincolor {
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  /*padding: 5px;*/
+  text-transform: uppercase;
+  font-weight: bold;
+  font-family: Helvetica;
+  font-size: 12px;
+  margin: 0;
+  color: rgba(0,0,0,0);
+}
+
+.month {
+  color: #fff;
+  font-family: Helvetica, Arial, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.nocolor {
+  color: rgba(0,0,0,0);
+}

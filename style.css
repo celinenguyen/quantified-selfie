@@ -1,14 +1,28 @@
 body {
 	margin: 0;
 	padding: 0;
-	background-color: #000;
+	background-color: #333;
 }
 
-#colors {
+#toggles, #range, #colors {
 	margin: 0 auto;
-	width: 800px;
+	width: 600px;
 }
 
+#toggles > div {
+	display: inline-block;
+	padding: 10px 20px;
+	background-color: #fff;
+}
+#toggles > div:hover {
+	background-color: #eee;
+}
+
+.colorRange {
+	/*width: 20px;*/
+	height: 100px;
+	display: inline-block;
+}
 
 .pincolor {
 	display: inline-block;
@@ -34,6 +48,9 @@ body {
 
 .month {
 	color: #fff;
+	font-family: Helvetica, Arial, sans-serif;
+	text-transform: uppercase;
+	letter-spacing: 2px;
 }
 
 .nocolor {

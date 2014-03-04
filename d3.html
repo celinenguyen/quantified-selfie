@@ -7,9 +7,17 @@
 </head>
 <body>
 
-	<button id="sort" onclick="sortColors()">Sort</button>
+<div id="toggles">
+  <div id="redRange">Red</div>
+  <div id="orangeRange">Orange</div>
+  <div id="yellowRange">Yellow</div>
+  <div id="greenRange">Green</div>
+  <div id="blueRange">Blue</div>
+  <div id="purpleRange">Purple</div>
+</div>
 
-	<div id="colors" class="debug"></div>
+<div id="range"></div>
+<div id="colors" class="debug"></div>
 
 <script type="text/javascript">
 
@@ -66,17 +74,58 @@
 	var prevMonth = "";
 	var currentMonth = "";
 
-	d3.csv("allpins.csv", function (pins) {
-		// console.log(pins);
+	var all_pins;
+
+	function drawHueRange(color) {
+
+		var from = color.from;
+		var to = color.to;
+
+		var inRange = $(all_pins).filter(function (i) {
+			var rgb = hex2rgb(all_pins[i]['dominant_color']);
+			var hsv = rgb2hsv(rgb.r, rgb.g, rgb.b);
+			return (hsv.h >= from && hsv.h <= to) 
+					&& (hsv.s > 10 && hsv.v > 30);
+		});
+
+		var sortedRange = inRange.sort(function (a, b) {
+			var aRGB = hex2rgb(a['dominant_color']);
+			var aHSV = rgb2hsv(aRGB.r, aRGB.g, aRGB.b);
+			var bRGB = hex2rgb(b['dominant_color']);
+			var bHSV = rgb2hsv(bRGB.r, bRGB.g, bRGB.b);
+			return aHSV.s - bHSV.s;
+		});
+
+		var num = sortedRange.length;
+
+		d3.select("#range").selectAll("div")
+			.data([])
+			.exit()
+			.remove();
+
+		d3.select("#range").selectAll("div")
+			.data(sortedRange)
+			.enter()
+			.append("div")
+			.style("width", (600 / num) + "px")
+			.style("background-color", function(d) {
+		    return d['dominant_color'];
+			})
+			.classed("colorRange", function (d) {
+				return true;
+			});
+	}
+
+	function drawColorCalendar() {
 		d3.select("#colors").selectAll("div")
-	    .data(pins)
+	    .data(all_pins)
 	    .enter()
 	    .append("div")
 	    .style("background-color", function(d) {
 		    return d['dominant_color'];
 			})
 			.style("background-image", function(d) {
-				return "url('" + d['image_square_url'] + "'')";
+				return "url('" + d['image_medium_url'] + "'')";
 			})
 			.classed("pincolor", true)
 			.classed("lighttext", function (d) {
@@ -117,24 +166,49 @@
 	    return "<p class='month'>" + $(this).text() + "</p>"
 		}
 	  );
+	}
+
+	d3.csv("allpins-color.csv", function (pins) {
+
+		all_pins = pins;
+
+		var red = new Object();
+			red.from = 330; red.to = 359;
+		var orange = new Object();
+			orange.from = 10; orange.to = 35;
+		var yellow = new Object();
+			yellow.from = 35; yellow.to = 60;
+		var green = new Object();
+			green.from = 60; green.to = 160;
+		var blue = new Object();
+			blue.from = 160; blue.to = 260;
+		var purple = new Object();
+			purple.from = 260; purple.to = 330;
+
+		drawHueRange(red);
+		$("#redRange").click(function() { 
+			drawHueRange(red);
+		});
+		$("#orangeRange").click(function() { 
+			drawHueRange(orange);
+		});
+		$("#yellowRange").click(function() { 
+			drawHueRange(yellow);
+		});
+		$("#greenRange").click(function() { 
+			drawHueRange(green);
+		});
+		$("#blueRange").click(function() { 
+			drawHueRange(blue);
+		});
+		$("#purpleRange").click(function() { 
+			drawHueRange(purple);
+		});
+
+		
+		drawColorCalendar(pins);
+
 	});
-
-	sortOrder = false;
-	sortColors = function (a, b) {
-
-		var sortItems = function (a, b) {
-			console.log(a);
-			// var aRGB = hex2rgb(a['dominant_color']);
-			// var aHSV = rgb2hsv(aRGB.r, aRGB.g, aRGB.b);
-			// var bRGB = hex2rgb(b['dominant_color']);
-			// var bHSV = rgb2hsv(bRGB.r, bRGB.g, bRGB.b);
-	  //   return aHSV.h - bHSV.h;
-    };
-
-    d3.selectAll("div")
-        .sort(sortItems)
-        .transition();
-  };
 
 </script>
 </body>
